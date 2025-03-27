@@ -1,0 +1,66 @@
+import React, { useState, useEffect, useCallback } from 'react';
+
+const EXERCISES = {
+  strength: [
+    { name: 'Push-ups', description: 'Standard chest and arm exercise' },
+    { name: 'Squats', description: 'Lower body strength exercise' },
+  ],
+  cardio: [
+    { name: 'Jumping Jacks', description: 'Full body cardio warmup' },
+    { name: 'High Knees', description: 'Intense cardio movement' },
+  ],
+};
+
+const WorkoutGenerator = () => {
+  const [duration, setDuration] = useState(5);
+  const [category, setCategory] = useState('strength');
+  const [workout, setWorkout] = useState([]);
+
+  const generateWorkout = useCallback(() => {
+    const categoryExercises = EXERCISES[category];
+    const numExercises = Math.ceil(duration / 2);
+    const selectedExercises = [];
+    for (let i = 0; i < numExercises; i++) {
+      const randomExercise = 
+        categoryExercises[Math.floor(Math.random() * categoryExercises.length)];
+      selectedExercises.push(randomExercise);
+    }
+    setWorkout(selectedExercises);
+  }, [duration, category]);
+
+  useEffect(() => {
+    generateWorkout();
+  }, [generateWorkout]);
+
+  return (
+    <div>
+      <h2>Workout Generator</h2>
+      <label>
+        Duration (minutes):
+        <input
+          type="number"
+          value={duration}
+          onChange={(e) => setDuration(Number(e.target.value))}
+        />
+      </label>
+      <label>
+        Category:
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          {Object.keys(EXERCISES).map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </label>
+      <button onClick={generateWorkout}>Generate Workout</button>
+      <ul>
+        {workout.map((exercise, index) => (
+          <li key={index}>{exercise.name}: {exercise.description}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default WorkoutGenerator;
